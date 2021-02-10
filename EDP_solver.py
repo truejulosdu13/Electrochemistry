@@ -33,16 +33,16 @@ def Matrix_constant(Nx, DM):
     return(M_new_constant, M_old_constant)
   
 # the time dependend Matrix is defined thanks to the constant Matrix and the boundaries conditions of the electrochemical problem
-def Matrix_E_Non_Nernst_boundaries(M_new_constant, Nx, t, E, Lambda):       
+def Matrix_E_Non_Nernst_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_syst):       
     M_new = M_new_constant
 
     # boundaries conditions at bulk :
     M_new[Nx-1,Nx-1] = M_new[2*Nx-1, 2*Nx-1] = 1
     
     # current condition on Cox
-    M_new[0, 0] = + 1 + Lambda*k_red(t, E)
+    M_new[0, 0] = + 1 + Lambda*k_red(t, E, cst_syst, F_norm)
     M_new[0, 1] = - 1
-    M_new[0,Nx] = - Lambda*k_ox(t, E)
+    M_new[0,Nx] = - Lambda*k_ox(t, E, cst_syst, F_norm)
     
     # equality of the concentration flux at the electrode
     M_new[Nx, 0]  = + 1
@@ -53,35 +53,35 @@ def Matrix_E_Non_Nernst_boundaries(M_new_constant, Nx, t, E, Lambda):
     return(M_new)  
 
 # the dime dependent Matrix requires the definition of Butler-Volmer kinetic constants :
-def sigma(t, E):                                        ## definition de sigma
+def sigma(t, E, cst_syst):                                        ## definition de sigma
     s = np.exp(n*F*(E(t) - E_0)/(R*T))       
     return(s)  
 
-def k_red(t, E):                                        ## definition de k_red
-    s = np.exp(-alpha*n*F*(E(t) - E_0)/(R*T))       
+def k_red(t, E, cst_syst, F_norm):                                        ## definition de k_red
+    s = np.exp(-cst_syst[3]*cst_syst[2]*F_norm*(E(t) - cst_syst[0]))      
     return(s)  
 
-def k_ox(t, E):                                        ## definition de k_ox
-    s = np.exp((1-alpha)*n*F*(E(t) - E_0)/(R*T))       
+def k_ox(t, E, cst_syst, F_norm):                                        ## definition de k_ox
+    s = np.exp((1-cst_syst[3])*cst_syst[2]*F_norm*(E(t) - cst_syst[0]))       
     return(s)  
 
 # calculating the right hand side term for the E mecanism
-def RHS_E(M_old, C_old):
+def RHS_E(M_old, C_old, cst_conc, Nx):
     RHS = np.dot(M_old, C_old)
     RHS[0]      = 0
-    RHS[Nx-1]   = C_ox_val
+    RHS[Nx-1]   = cst_conc[0]
     RHS[Nx]     = 0
-    RHS[2*Nx-1] = C_red_val  
+    RHS[2*Nx-1] = cst_conc[1] 
     return(RHS)
 
 # temporal propagation of the concentration profile
-def compute_Cnew(M_new, M_old, C_old):
-    RHS = RHS_E(M_old, C_old)
+def compute_Cnew(M_new, M_old, C_old, cst_conc, Nx):
+    RHS = RHS_E(M_old, C_old, cst_conc, Nx)
     C_new = np.linalg.solve(M_new, RHS)
     return(C_new)
 
 # computing the current for any concentration profile
-def compute_I(C):
+def compute_I(C, cst_all):
     # reference = Heinze 1993
     # I = S*sum(zi*fi) 
     # where zi is the algebraic charge of the current, the convention of positiv anodic current is taken
@@ -90,8 +90,8 @@ def compute_I(C):
     # 
     # Note :Intensity = n*S*(k_ox(t, E)*C[Nx] - k_red(t,E)*C[0]) cette expression n'est pas stable du au fait 
     # que les concentration à l'electrode sont trop faibles. on obtient un signal bruité.
-
-    Intensity = -F*D*S*(1*(C[1]-C[0])-1*(C[Nx+1]-C[Nx]))/Dx
+    n, F, D, S, Nx, Dx = cst_all[2][2], cst_all[0][2], cst_all[2][1], cst_all[0][4], cst_all[3][1], cst_all[3][5]
+    Intensity = -n*F*D*S*(1*(C[1]-C[0])-1*(C[Nx+1]-C[Nx]))/Dx
     return(Intensity)
 
 
