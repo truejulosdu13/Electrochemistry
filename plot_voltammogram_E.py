@@ -160,3 +160,5 @@ def plot_SWV(cst_all, I):
 
     plt.legend()
     plt.show()
+    
+    return(E_for, I_for, E_rev, I_rev, Delta_I)
