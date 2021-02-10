@@ -56,6 +56,9 @@ def SWV(E_i, E_f, ESW, Delta_E, f):       # fonction marche (staircase_volta)
         if (math.floor(2*t/tau) % 2) == 0:
             E_t += signe*ESW  
         return(E_t)
-    return(E, tk)
+    def E_sweep(t):
+        E_sweep_t = E_i + Delta_E*f*t/(2*np.pi) 
+        return(E_sweep_t)
+    return(E, E_sweep, tk)
 
 
