@@ -1,4 +1,5 @@
-# this functions take as input the experimental parameters that you fix depending on the kind of experiment you use ; for example for a linear sweep potential
+# this functions take as input the experimental parameters that you fix depending on the kind of experiment you use ; 
+# for example for a linear sweep potential you have to fix : start potential, end potential and sweep rate.
 
 def rampe(E_i, E_f, v):                   # rampe de potentiel
     ## DERIVED CONSTANTS = function du signal imposé
