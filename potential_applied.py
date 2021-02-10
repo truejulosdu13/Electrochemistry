@@ -1,3 +1,6 @@
+import math
+import numpy as np
+
 # this functions take as input the experimental parameters that you fix depending on the kind of experiment you use ; 
 # for example for a linear sweep potential you have to fix : start potential, end potential and sweep rate.
 
@@ -28,7 +31,7 @@ def creneau(E_1, E_2, tau):              # creneau (chrono_double_saut)
         return(E_t)
     return(E, tk)
 
-def escalier(E_i, E_f, DeltaE, v):       # fonction marche (staircase_volta)
+def CSV(E_i, E_f, DeltaE, v):       # fonction marche (staircase_volta)
     ## DERIVED CONSTANTS = function du signal imposé
     tk  = 2*abs(E_i - E_f)/v            
     
@@ -54,3 +57,5 @@ def SWV(E_i, E_f, ESW, Delta_E, f):       # fonction marche (staircase_volta)
             E_t += signe*ESW  
         return(E_t)
     return(E, tk)
+
+
