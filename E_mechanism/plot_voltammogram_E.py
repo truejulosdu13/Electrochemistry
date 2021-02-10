@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from potential_applied import *
+from /Users/julesschleinitz/Desktop/These/Git_Electrochemistry/Electrochemistry/potential_applied import *
 from EDP_solver import *
 
 # main programm for linear sweep voltammetry
