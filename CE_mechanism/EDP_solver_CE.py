@@ -25,7 +25,7 @@ def Equilibrium_Matrix(Nx, n, k_p, k_m):
     for i in range(Nx-2):
         Eq_Mat[i+1,i+1]       = -k_p 
         Eq_Mat[i+1,Nx+i+1]    = +k_m
-        Eq_Mat[Nx+i+1,i+1]    = -k_p
+        Eq_Mat[Nx+i+1,i+1]    = +k_p
         Eq_Mat[Nx+i+1,Nx+i+1] = -k_m       
     return(Eq_Mat)
 
@@ -40,6 +40,10 @@ def Matrix_CE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_syst):
     M_new = M_new_constant
         # boundaries conditions at bulk :
     M_new[Nx-1,Nx-1] = M_new[2*Nx-1, 2*Nx-1] = M_new[3*Nx-1, 3*Nx-1] = 1
+    
+        # zero flux condition on C_a
+    M_new[0,0]  = + 1
+    M_new[0,1]  = - 1 
     
         # current condition on C_b
     M_new[Nx, Nx]  = + 1 + Lambda*k_red(t, E, cst_syst, F_norm)
@@ -56,8 +60,10 @@ def Matrix_CE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_syst):
 
 def compute_equilibrium(cst_conc, cst_syst):
     K = cst_syst[6]/cst_syst[7]
+    print("K = ", K)
     C_a_eq = (cst_conc[0] + cst_conc[1])/(1+K)
     C_b_eq = (cst_conc[0] + cst_conc[1])*K/(1+K)
+    print("C_a_eq = ", C_a_eq, "C_b_eq = ", C_b_eq)
     return(C_a_eq, C_b_eq)
 
 # the dime dependent Matrix requires the definition of Butler-Volmer kinetic constants :

@@ -18,12 +18,14 @@ def main_LSV_CE(cst_all):
     
     ## profil de concentration inital
     # calcul de l'equilibre entre a et b (a+b =a0+b0 et a/b=K)
-    (C_a_eq, C_b_eq) = compute_equilibrium(cst_all[1], cst_all[2])
-    print(Nx)
-    C_new = [C_a_eq for i in range(Nx), C_b_eq for i in range(Nx), cst_all[1][2] for i in range(Nx)]
-
+    (C_a_eq, C_b_eq) = compute_equilibrium(cst_all[1], cst_all[2]) 
+    cst_conc_eq = (C_a_eq, C_b_eq, cst_all[1][2])
+    C_new = np.append([C_a_eq for i in range(Nx)], [C_b_eq for i in range(Nx)])
+    C_new = np.append(C_new, [cst_conc_eq[2] for i in range(Nx)])
+   
+    
     ## propagation temporelle
-    fig, ax = plt.subplots(3, figsize=(20, 10))
+    fig, ax = plt.subplots(4, figsize=(30, 10))
     (M_new_constant, M_old) = Matrix_constant_CE(Nx, Dt, 3, k_p, k_m, DM)
     I = np.array(())
 
@@ -31,15 +33,17 @@ def main_LSV_CE(cst_all):
         C_old = C_new
         t = i*Dt 
         M_new = Matrix_CE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_all[2])
-        C_new = compute_Cnew(M_new, M_old, C_old, cst_all[1], Nx)
+        C_new = compute_Cnew(M_new, M_old, C_old, cst_conc_eq, Nx)
         I = np.append(I, compute_I_CE(C_new, cst_all))
         if i % math.floor(Nt/10) == 0:
-            ax[0].plot([j*Dx for j in range(Nx)], C_new[:Nx], label= 'time = %is' %(i*Dt))
-            ax[1].plot([j*Dx for j in range(Nx)], C_new[Nx:], label= 'time = %is' %(i*Dt))
+            ax[0].plot([j*Dx for j in range(Nx)], C_new[:-2*Nx], label= 'time = %is' %(i*Dt))
+            ax[1].plot([j*Dx for j in range(Nx)], C_new[Nx:-Nx], label= 'time = %is' %(i*Dt))
+            ax[2].plot([j*Dx for j in range(Nx)], C_new[2*Nx:], label= 'time = %is' %(i*Dt))
 
-    ax[2].plot([E(i*(Dt)) for i in range(Nt)], I)
+    ax[3].plot([E(i*(Dt)) for i in range(Nt)], I)
     ax[0].legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
     ax[1].legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+    ax[2].legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
     plt.show()
     
     return(I)
