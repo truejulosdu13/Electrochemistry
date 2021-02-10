@@ -1,34 +1,38 @@
-import math
+import sys
+sys.path.append('../')
 import numpy as np
 import matplotlib.pyplot as plt
 from potential_applied import *
-from EDP_solver import *
+from EDP_solver_CE import *
 
 # main programm for linear sweep voltammetry
-def main_LSV_E(cst_all):
-    (Nt, Nx, DM, Lambda, L_cuve, Dx) = cst_all[3]
+def main_LSV_CE(cst_all):
+    Nt, Nx, DM, Lambda, L_cuve, Dx = cst_all[3]
     F_norm = cst_all[0][3]
-    (E, tk) = rampe(cst_all[4][0], cst_all[4][1], cst_all[4][4])
-    
+    E, tk = rampe(cst_all[4][0], cst_all[4][1], cst_all[4][4])
+    k_p, k_m = cst_all[2][6], cst_all[2][7]
     ## time step
     Dt = tk/Nt
 
     print("DM = ", DM, "and lambda = ", Lambda)
     
     ## profil de concentration inital
-    C_new = np.append([cst_all[1][0] for i in range(Nx)],[cst_all[1][1] for i in range(Nx)])
+    # calcul de l'equilibre entre a et b (a+b =a0+b0 et a/b=K)
+    (C_a_eq, C_b_eq) = compute_equilibrium(cst_all[1], cst_all[2])
+    print(Nx)
+    C_new = [C_a_eq for i in range(Nx), C_b_eq for i in range(Nx), cst_all[1][2] for i in range(Nx)]
 
     ## propagation temporelle
     fig, ax = plt.subplots(3, figsize=(20, 10))
-    (M_new_constant, M_old) = Matrix_constant(Nx, DM)
+    (M_new_constant, M_old) = Matrix_constant_CE(Nx, Dt, 3, k_p, k_m, DM)
     I = np.array(())
 
     for i in range(Nt):
         C_old = C_new
         t = i*Dt 
-        M_new = Matrix_E_Non_Nernst_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_all[2])
+        M_new = Matrix_CE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_all[2])
         C_new = compute_Cnew(M_new, M_old, C_old, cst_all[1], Nx)
-        I = np.append(I, compute_I(C_new, cst_all))
+        I = np.append(I, compute_I_CE(C_new, cst_all))
         if i % math.floor(Nt/10) == 0:
             ax[0].plot([j*Dx for j in range(Nx)], C_new[:Nx], label= 'time = %is' %(i*Dt))
             ax[1].plot([j*Dx for j in range(Nx)], C_new[Nx:], label= 'time = %is' %(i*Dt))

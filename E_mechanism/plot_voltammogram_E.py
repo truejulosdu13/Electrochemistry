@@ -1,7 +1,9 @@
 import math
+import sys
+sys.path.append('../')
 import numpy as np
 import matplotlib.pyplot as plt
-from /Users/julesschleinitz/Desktop/These/Git_Electrochemistry/Electrochemistry/potential_applied import *
+from potential_applied import *
 from EDP_solver import *
 
 # main programm for linear sweep voltammetry

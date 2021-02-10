@@ -17,7 +17,7 @@ def Identity_troncated(Nx, n):
     Identity_Mat = np.zeros((n*Nx,n*Nx))
     for j in range(n):
         for i in range(Nx-2):
-            Identity_t[j*Nx+i+1,j*Nx+i+1] = 1
+            Identity_Mat[j*Nx+i+1,j*Nx+i+1] = 1
     return(Identity_Mat)
 
 def Equilibrium_Matrix(Nx, n, k_p, k_m):
@@ -30,7 +30,7 @@ def Equilibrium_Matrix(Nx, n, k_p, k_m):
     return(Eq_Mat)
 
 # a first constant over time Matrix is defined
-def Matrix_constant(Nx, Dt, n, k_p, k_m, DM):
+def Matrix_constant_CE(Nx, Dt, n, k_p, k_m, DM):
     M_new_constant = Identity_troncated(Nx, n) - 0.5*DM*Laplacian_Matrix(Nx, n) - 0.5*Dt*Equilibrium_Matrix(Nx, n, k_p, k_m)
     M_old_constant = Identity_troncated(Nx, n) + 0.5*DM*Laplacian_Matrix(Nx, n) + 0.5*Dt*Equilibrium_Matrix(Nx, n, k_p, k_m)  
     return(M_new_constant, M_old_constant)
@@ -53,6 +53,12 @@ def Matrix_CE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_syst):
     M_new[2*Nx, 2*Nx+1] = - 1
     
     return(M_new)
+
+def compute_equilibrium(cst_conc, cst_syst):
+    K = cst_syst[6]/cst_syst[7]
+    C_a_eq = (cst_conc[0] + cst_conc[1])/(1+K)
+    C_b_eq = (cst_conc[0] + cst_conc[1])*K/(1+K)
+    return(C_a_eq, C_b_eq)
 
 # the dime dependent Matrix requires the definition of Butler-Volmer kinetic constants :
 def sigma(t, E, cst_syst):                                        ## definition de sigma
