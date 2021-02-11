@@ -55,7 +55,7 @@ def main_LSV_ECE(cst_all):
     ax[3].title.set_text('Profil de concentration de D en fonction du temps')
     titre_i_E = f"Courbe intensité potentiel ECE E1 = {cst_all[2][0]} V et E2 = {cst_all[2][9]} V."
     ax[4].title.set_text(titre_i_E)
-    
+    plt.savefig('ECE.png')
     plt.show()
     
     return(I)
@@ -186,5 +186,5 @@ def plot_SWV(cst_all, I):
     plt.legend()
     plt.figure(figsize=(10,10))
     plt.show()
-    
+    plt.savefig('ECE.png')
     return(E_for, I_for, E_rev, I_rev, Delta_I)
