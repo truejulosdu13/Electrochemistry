@@ -46,7 +46,7 @@ def main_LSV_E(cst_all):
 def main_CSV_E(cst_all):
     (Nt, Nx, DM, Lambda, L_cuve, Dx) = cst_all[3]
     F_norm = cst_all[0][3]
-    (E, tk) = CSV(cst_all[4][0], cst_all[4][1], cst_all[4][3], cst_all[4][4])
+    (E, tk) = CSV(cst_all[4][7], cst_all[4][0], cst_all[4][1], cst_all[4][3], cst_all[4][4])
     
     ## time step
     Dt = tk/Nt

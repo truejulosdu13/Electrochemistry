@@ -31,17 +31,33 @@ def creneau(E_1, E_2, tau):              # creneau (chrono_double_saut)
         return(E_t)
     return(E, tk)
 
-def CSV(E_i, E_f, DeltaE, v):       # fonction marche (staircase_volta)
+def CSV(E_i, E_ox, E_red, DeltaE, v):       # fonction marche (staircase_volta)
+    if E_i > E_ox or E_i < E_red :
+        print("E_i > E_ox or E_i < E_red : change your experimental parameters !")
     ## DERIVED CONSTANTS = function du signal imposé
-    tk  = 2*abs(E_i - E_f)/v            
+    tk  = 2*abs(E_red - E_ox)/v            
     
-    signe = abs(E_f - E_i)/(E_f - E_i)
+    signe = abs(DeltaE)/DeltaE
     def E(t):
-        t_12 = tk/2
-        if t < t_12 :
-            E_t = E_i + signe*math.floor(v*t/DeltaE)*DeltaE
-        else:
-            E_t = E_f - signe*math.floor(v*(t-t_12)/DeltaE)*DeltaE
+        if signe > 0:      
+            t_inv1 = (E_ox - E_i)/v
+            t_inv2 = (E_ox - E_i + E_ox - E_red)/v
+            if t < t_inv1 :
+                E_t = E_i + signe*math.floor(v*t/DeltaE)*DeltaE
+            elif t < t_inv2 :
+                E_t = E_ox - signe*math.floor(v*(t-t_inv1)/DeltaE)*DeltaE
+            else:
+                E_t = E_red + signe*math.floor(v*(t-t_inv2)/DeltaE)*DeltaE
+        
+        if signe < 0:      
+            t_inv1 = (E_i - E_red)/v
+            t_inv2 = (E_i - E_red + E_ox - E_red)/v
+            if t < t_inv1 :
+                E_t = E_i + signe*math.floor(v*t/abs(DeltaE))*DeltaE
+            elif t < t_inv2 :
+                E_t = E_red - signe*math.floor(v*(t-t_inv1)/abs(DeltaE))*DeltaE
+            else:
+                E_t = E_ox + signe*math.floor(v*(t-t_inv2)/abs(DeltaE))*DeltaE
         return(E_t)
     return(E, tk)
 
