@@ -43,21 +43,21 @@ def CSV(E_i, E_ox, E_red, DeltaE, v):       # fonction marche (staircase_volta)
             t_inv1 = (E_ox - E_i)/v
             t_inv2 = (E_ox - E_i + E_ox - E_red)/v
             if t < t_inv1 :
-                E_t = E_i + signe*math.floor(v*t/DeltaE)*DeltaE
+                E_t = E_i + math.floor(v*t/DeltaE)*DeltaE
             elif t < t_inv2 :
-                E_t = E_ox - signe*math.floor(v*(t-t_inv1)/DeltaE)*DeltaE
+                E_t = E_ox - math.floor(v*(t-t_inv1)/DeltaE)*DeltaE
             else:
-                E_t = E_red + signe*math.floor(v*(t-t_inv2)/DeltaE)*DeltaE
+                E_t = E_red + math.floor(v*(t-t_inv2)/DeltaE)*DeltaE
         
         if signe < 0:      
             t_inv1 = (E_i - E_red)/v
             t_inv2 = (E_i - E_red + E_ox - E_red)/v
             if t < t_inv1 :
-                E_t = E_i + signe*math.floor(v*t/abs(DeltaE))*DeltaE
+                E_t = E_i + math.floor(v*t/abs(DeltaE))*DeltaE
             elif t < t_inv2 :
-                E_t = E_red - signe*math.floor(v*(t-t_inv1)/abs(DeltaE))*DeltaE
+                E_t = E_red - math.floor(v*(t-t_inv1)/abs(DeltaE))*DeltaE
             else:
-                E_t = E_ox + signe*math.floor(v*(t-t_inv2)/abs(DeltaE))*DeltaE
+                E_t = E_ox + math.floor(v*(t-t_inv2)/abs(DeltaE))*DeltaE
         return(E_t)
     return(E, tk)
 

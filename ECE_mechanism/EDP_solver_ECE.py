@@ -36,7 +36,7 @@ def Matrix_constant_ECE(Nx, Dt, n, k_p, k_m, DM):
     return(M_new_constant, M_old_constant)
 
 # the time dependend Matrix is defined thanks to the constant Matrix and the boundaries conditions of the electrochemical problem
-def Matrix_ECE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_syst): 
+def Matrix_ECE_boundaries_red(M_new_constant, t, E, Lambda, Nx, F_norm, cst_syst): 
     M_new = M_new_constant
         # boundaries conditions at bulk :
     M_new[Nx-1,Nx-1] = M_new[2*Nx-1, 2*Nx-1] = M_new[3*Nx-1, 3*Nx-1] = M_new[4*Nx-1, 4*Nx-1] = 1
@@ -51,6 +51,36 @@ def Matrix_ECE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, cst_syst):
     M_new[0, 0]         = + 1 + Lambda*k_red_1(t, E, cst_syst, F_norm)
     M_new[0, 1]         = - 1
     M_new[0, Nx]        = - Lambda*k_ox_1(t, E, cst_syst, F_norm)
+    
+        # equality of the concentration flux at the electrode for A/B
+    M_new[Nx, 0]        = + 1
+    M_new[Nx, 1]        = - 1
+    M_new[Nx, Nx]       = + 1
+    M_new[Nx, Nx+1]     = - 1
+    
+        # equality of the concentration flux at the electrode for C/D
+    M_new[3*Nx, 2*Nx]    = + 1
+    M_new[3*Nx, 2*Nx+1]  = - 1
+    M_new[3*Nx, 3*Nx]    = + 1
+    M_new[3*Nx, 3*Nx+1]  = - 1
+    
+    return(M_new)
+
+def Matrix_ECE_boundaries_ox(M_new_constant, t, E, Lambda, Nx, F_norm, cst_syst): 
+    M_new = M_new_constant
+        # boundaries conditions at bulk :
+    M_new[Nx-1,Nx-1] = M_new[2*Nx-1, 2*Nx-1] = M_new[3*Nx-1, 3*Nx-1] = M_new[4*Nx-1, 4*Nx-1] = 1
+ 
+    
+       # current condition on C_c
+    M_new[2*Nx, 2*Nx]   = + 1 + Lambda*k_ox_2(t, E, cst_syst, F_norm)
+    M_new[2*Nx, 2*Nx+1] = - 1
+    M_new[2*Nx, 3*Nx]   = - Lambda*k_red_2(t, E, cst_syst, F_norm)
+    
+        # current condition on C_a
+    M_new[0, 0]         = + 1 + Lambda*k_ox_1(t, E, cst_syst, F_norm)
+    M_new[0, 1]         = - 1
+    M_new[0, Nx]        = - Lambda*k_red_1(t, E, cst_syst, F_norm)
     
         # equality of the concentration flux at the electrode for A/B
     M_new[Nx, 0]        = + 1
@@ -115,7 +145,7 @@ def compute_Cnew(M_new, M_old, C_old, cst_conc, Nx):
     return(C_new)
 
 # computing the current for any concentration profile
-def compute_I_ECE(C, cst_all):
+def compute_I_ECE_red(C, cst_all):
     # reference = Heinze 1993
     # I = S*sum(zi*fi) 
     # where zi is the algebraic charge of the current, the convention of positiv anodic current is taken
@@ -126,6 +156,11 @@ def compute_I_ECE(C, cst_all):
     # que les concentration à l'electrode sont trop faibles. on obtient un signal bruité.
     n, F, D, S, Nx, Dx = cst_all[2][2], cst_all[0][2], cst_all[2][1], cst_all[0][4], cst_all[3][1], cst_all[3][5]
     Intensity = -n*F*D*S*(1*(C[1]-C[0])-1*(C[Nx+1]-C[Nx]) + 1*(C[2*Nx+1]-C[2*Nx])-1*(C[3*Nx+1]-C[3*Nx]))/Dx
+    return(Intensity)
+
+def compute_I_ECE_ox(C, cst_all):
+    n, F, D, S, Nx, Dx = cst_all[2][2], cst_all[0][2], cst_all[2][1], cst_all[0][4], cst_all[3][1], cst_all[3][5]
+    Intensity = n*F*D*S*(1*(C[1]-C[0])-1*(C[Nx+1]-C[Nx]) + 1*(C[2*Nx+1]-C[2*Nx])-1*(C[3*Nx+1]-C[3*Nx]))/Dx
     return(Intensity)
 
     
