@@ -36,7 +36,7 @@ def set_default_constants():
 
 # key adimensionnated parameters
     DM      = 0.45        #DM = D*Dt/Dx**2 numerical adimensionated diffusion parameter. Default = 0.45
-    Lambda  = 100         #Lambda  = k0*Dx/D numerical adimensionated electron transfer parameter. Fast if 
+    Lambda  = 50         #Lambda  = k0*Dx/D numerical adimensionated electron transfer parameter. Fast if 
 
 # physical distances according to the previosu parameters
     L_cuve  = math.floor((D*Nt)**0.5) + 2 # longueur physique de la cuve so that we are always in a diffusion controled system
