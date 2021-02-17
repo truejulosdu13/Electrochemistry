@@ -36,7 +36,7 @@ def Matrix_constant_CE(Nx, Dt, n, k_p, k_m, DM):
     return(M_new_constant, M_old_constant)
 
 # the time dependend Matrix is defined thanks to the constant Matrix and the boundaries conditions of the electrochemical problem
-def Matrix_CE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, E_0_1, alpha, n): 
+def Matrix_CE_boundaries_red(M_new_constant, t, E, Lambda, Nx, F_norm, E_0_1, alpha, n): 
     M_new = M_new_constant
         # boundaries conditions at bulk :
     M_new[Nx-1,Nx-1] = M_new[2*Nx-1, 2*Nx-1] = M_new[3*Nx-1, 3*Nx-1] = 1
@@ -57,6 +57,29 @@ def Matrix_CE_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, E_0_1, alpha,
     M_new[2*Nx, 2*Nx+1] = - 1
     
     return(M_new)
+
+def Matrix_CE_boundaries_ox(M_new_constant, t, E, Lambda, Nx, F_norm, E_0_1, alpha, n): 
+    M_new = M_new_constant
+        # boundaries conditions at bulk :
+    M_new[Nx-1,Nx-1] = M_new[2*Nx-1, 2*Nx-1] = M_new[3*Nx-1, 3*Nx-1] = 1
+    
+        # zero flux condition on C_a
+    M_new[0,0]  = + 1
+    M_new[0,1]  = - 1 
+    
+        # current condition on C_b
+    M_new[Nx, Nx]  = + 1 + Lambda*k_ox(t, E, n, F_norm, E_0_1, alpha)
+    M_new[Nx, Nx+1] = - 1
+    M_new[Nx, 2*Nx] = - Lambda*k_red(t, E, n, F_norm, E_0_1, alpha)
+    
+        # equality of the concentration flux at the electrode
+    M_new[2*Nx, Nx]     = + 1
+    M_new[2*Nx, Nx+1]   = - 1
+    M_new[2*Nx, 2*Nx]   = + 1
+    M_new[2*Nx, 2*Nx+1] = - 1
+    
+    return(M_new)
+
 
 def compute_equilibrium(C_a, C_b, K):
     C_a_eq = (C_a + C_b)/(1+K)
@@ -95,18 +118,16 @@ def compute_Cnew_CE(M_new, M_old, C_old, cst_conc, Nx):
     return(C_new)
 
 # computing the current for any concentration profile
-def compute_I_CE(C, cst_all):
-    # reference = Heinze 1993
-    # I = S*sum(zi*fi) 
-    # where zi is the algebraic charge of the current, the convention of positiv anodic current is taken
-    # fi stands for the flux of the specie i at the electrode 
-    # first approximation of the flux is taken here as the first partial derivative along space
-    # 
-    # Note :Intensity = n*S*(k_ox(t, E)*C[Nx] - k_red(t,E)*C[0]) cette expression n'est pas stable du au fait 
-    # que les concentration à l'electrode sont trop faibles. on obtient un signal bruité.
+def compute_I_CE_red(C, cst_all):
     n, F, D, S, Nx, Dx = cst_all["n"], cst_all["F"], cst_all["D"], cst_all["S"], cst_all["Nx"], cst_all["Dx"]
     Intensity = -n*F*D*S*(1*(C[Nx+1]-C[Nx+0])-1*(C[2*Nx+1]-C[2*Nx]))/Dx
     return(Intensity)
+
+def compute_I_CE_ox(C, cst_all):
+    n, F, D, S, Nx, Dx = cst_all["n"], cst_all["F"], cst_all["D"], cst_all["S"], cst_all["Nx"], cst_all["Dx"]
+    Intensity = -n*F*D*S*(1*(C[Nx+1]-C[Nx+0])-1*(C[2*Nx+1]-C[2*Nx]))/Dx
+    return(Intensity)
+
 
     
     

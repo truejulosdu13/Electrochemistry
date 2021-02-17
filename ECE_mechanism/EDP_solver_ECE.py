@@ -95,13 +95,6 @@ def Matrix_ECE_boundaries_ox(M_new_constant, t, E, Lambda, Nx, F_norm, E_0_1, E_
     
     return(M_new)
 
-def compute_equilibrium(cst_conc, cst_syst):
-    K = cst_syst[6]/cst_syst[7]
-    print("K = ", K)
-    C_a_eq = (cst_conc[0] + cst_conc[1])/(1+K)
-    C_b_eq = (cst_conc[0] + cst_conc[1])*K/(1+K)
-    print("C_a_eq = ", C_a_eq, "C_b_eq = ", C_b_eq)
-    return(C_a_eq, C_b_eq)
 
 # the dime dependent Matrix requires the definition of Butler-Volmer kinetic constants :
 def sigma(t, E, cst_syst):                                        ## definition de sigma
@@ -116,9 +109,7 @@ def k_ox(t, E, n, F_norm, E_0_1, alpha):                                       #
     s = np.exp((1-alpha)*n*F_norm*(E(t) - E_0_1))       
     return(s)  
    
-    return(s)  
-
-# calculating the right hand side term for the E mecanism
+# calculating the right hand side term for the ECE mecanism
 def RHS_ECE(M_old, C_old, C_a, C_b, C_c, C_d, Nx):
     RHS = np.dot(M_old, C_old)
     RHS[0]      = 0

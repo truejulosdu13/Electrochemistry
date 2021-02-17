@@ -7,7 +7,7 @@ from potential_applied import *
 from EDP_solver import *
 
 # main programm for linear sweep voltammetry
-def main_LSV_E(cst_all):
+def main_LSV_E_red(cst_all):
     F_norm = cst_all["F_norm"]
     Nx = cst_all["Nx"]
     DM = cst_all["DM"]
@@ -30,7 +30,7 @@ def main_LSV_E(cst_all):
     for i in range(cst_all["Nt"]):
         C_old = C_new
         t = i*Dt 
-        M_new = Matrix_E_Non_Nernst_boundaries(M_new_constant, 
+        M_new = Matrix_E_Non_Nernst_boundaries_red(M_new_constant, 
                                                t, E, 
                                                cst_all["Lambda"], 
                                                Nx, 
@@ -153,53 +153,3 @@ def main_SWV_E(cst_all):
     plt.show()
     return(I)
 
-# exctraction des courants for rev et differentiels de la SWV
-def plot_SWV(cst_all, I):
-    (E, E_sweep, tk) = SWV(cst_all["E_i"], 
-                           cst_all["E_ox"], 
-                           cst_all["E_red"], 
-                           cst_all["E_SW"], 
-                           cst_all["Delta_E"], 
-                           cst_all["f"], 
-                           cst_all["Ox"])
-    Nt = cst_all["Nt"]
-    Dt = tk/Nt
-    I_for = []
-    E_for = []
-    I_rev = []
-    E_rev = []
-
-    i = 1
-    count = 0
-    while i < Nt:
-        if E((i-1)*Dt) == E(i*Dt):
-            i += 1
-        else:
-            if count == 0:
-                I_for.append(I[i-1])
-                E_for.append(E((i-1)*Dt))
-                count = 1
-            else:
-                I_rev.append(I[i-1])
-                E_rev.append(E((i-1)*Dt))
-                count = 0
-            i += 1    
-
-    plt.plot(E_for, I_for, label = 'i_for') 
-    plt.plot(E_rev, I_rev, label = 'i_rev')
-
-    if len(I_for) == len(I_rev):
-        Delta_I = np.array(I_for) - np.array(I_rev)
-        plt.plot(E_for, Delta_I, label = 'delta_i') 
-    elif len(I_rev) == len(I_for)-1:
-        I_rev_new = np.append(0, np.array(I_rev))
-        Delta_I = np.array(I_for) - np.array(I_rev_new)
-        plt.plot(E_for, Delta_I, label = 'delta_i') 
-    else:
-        print("Il y a une couille dans le potage")
-    
-    plt.legend()
-    plt.figure(figsize=(10,10))
-    plt.show()
-    
-    return(E_for, I_for, E_rev, I_rev, Delta_I)

@@ -33,7 +33,7 @@ def Matrix_constant_E(Nx, DM):
     return(M_new_constant, M_old_constant)
   
 # the time dependend Matrix is defined thanks to the constant Matrix and the boundaries conditions of the electrochemical problem
-def Matrix_E_Non_Nernst_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, E_0_1, alpha, n):       
+def Matrix_E_Non_Nernst_boundaries_red(M_new_constant, t, E, Lambda, Nx, F_norm, E_0_1, alpha, n):       
     M_new = M_new_constant
 
     # boundaries conditions at bulk :
@@ -51,6 +51,21 @@ def Matrix_E_Non_Nernst_boundaries(M_new_constant, t, E, Lambda, Nx, F_norm, E_0
     M_new[Nx, Nx+1] = -1
     
     return(M_new)  
+
+def Matrix_E_Non_Nernst_boundaries_ox(M_new_constant, t, E, Lambda, Nx, F_norm, E_0_1, alpha, n):       
+    M_new = M_new_constant
+    # boundaries conditions at bulk :
+    M_new[Nx-1,Nx-1] = M_new[2*Nx-1, 2*Nx-1] = 1 
+    # current condition on Cred
+    M_new[0, 0] = + 1 + Lambda*k_ox(t, E, n, F_norm, E_0_1, alpha)
+    M_new[0, 1] = - 1
+    M_new[0,Nx] = - Lambda*k_red(t, E, n, F_norm, E_0_1, alpha)    
+    # equality of the concentration flux at the electrode
+    M_new[Nx, 0]  = + 1
+    M_new[Nx, 1]  = - 1
+    M_new[Nx, Nx] = + 1
+    M_new[Nx, Nx+1] = -1
+    return(M_new)
 
 # the dime dependent Matrix requires the definition of Butler-Volmer kinetic constants :
 def sigma(t, E, n, F_norm, E_0_1):                                        ## definition de sigma

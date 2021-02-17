@@ -84,6 +84,9 @@ def default_constants():
             "n_sp"    : 4,            # number of reactive species considered
 
         ### SYSTEM DEPENDENT
+            "Reductible"   : True,    # Nature of the compound used :
+                                            #if True than it can be reduced, 
+                                            #if False it can only be oxydized
             "E_0_1"        : -0.5,    # electrochemical potential couple A/B. Default = 0.0
             "E_0_2"        : -1.0,    # electrochemical potential couple C/D. Default = -1.0
             "D"            : 1E-5,    # cm^2/s, O & R diffusion coefficient. Default = 1E-5
@@ -110,6 +113,7 @@ def default_constants():
 
         ## Experimental paramters for all voltammetry techniques
         ## LSV
+            "expe_type"    : 'LSV',    # Type of experience (Default = LSV, can be CSV, creneau or SWV)
             "Ox"           : True,    # Oxydation or Reduction direction of the voltammogram
             "E_i"          : +0.0,    # Start potential (V)
             "E_ox"         : +0.5,    # Upper potential bound (V)
@@ -118,7 +122,8 @@ def default_constants():
             "Delta_E"      : -0.01,   # Potential step for  (V)
             "v"            : 0.1,     # Scan rate (V.s-1)
             "f"            : 25,      # Frequency (s-1)
-            "tau"          : 1.0      # Time step for double step chronamperometry (s)
+            "tau"          : 1.0,     # Time step for double step chronamperometry (s)
+            "exp_time"     : 0.0      # Experience Time duration (s)
             }
     L_cuve  = math.floor((d_cst["D"]*d_cst["Nt"])**0.5) + 2
     Dx      = L_cuve/d_cst["Nx"]                      # pas d'espace
