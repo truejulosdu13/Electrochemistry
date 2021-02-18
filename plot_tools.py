@@ -1,6 +1,7 @@
 from potential_applied import SWV
 from potential_applied import CSV
 import numpy as np
+import matplotlib.pyplot as plt
 
 # exctraction des courants for rev et differentiels de la SWV
 def plot_SWV(cst_all, I):

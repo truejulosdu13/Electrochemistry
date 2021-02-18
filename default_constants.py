@@ -77,20 +77,21 @@ def default_constants():
 
         ## INDEPENDENT VARIABLES 
         ### EXPERIMENTALLY CONTROLED
-            "C_a"     : 2E-3,         # mol/L, initial concentration of A. Default = 1.0
-            "C_b"     : 0.0,          # mol/L, initial concentration of B. Default = 0.0
-            "C_c"     : 0.0,          # mol/L, initial concentration of C. Default = 0.0
-            "C_d"     : 0.0,          # mol/L, initial concentration of D. Default = 0.0
-            "n_sp"    : 4,            # number of reactive species considered
+            "C_a"          : 2E-3,         # mol/L, initial concentration of A. Default = 1.0
+            "C_b"          : 0.0,          # mol/L, initial concentration of B. Default = 0.0
+            "C_c"          : 0.0,          # mol/L, initial concentration of C. Default = 0.0
+            "C_d"          : 0.0,          # mol/L, initial concentration of D. Default = 0.0
+            "num_species"  : 0,            # number of reactive species considered
 
         ### SYSTEM DEPENDENT
+            "mechanism"    : 'ECE',   # Electrochemical scheme (can be E, CE or ECE) 
             "Reductible"   : True,    # Nature of the compound used :
                                             #if True than it can be reduced, 
                                             #if False it can only be oxydized
             "E_0_1"        : -0.5,    # electrochemical potential couple A/B. Default = 0.0
             "E_0_2"        : -1.0,    # electrochemical potential couple C/D. Default = -1.0
             "D"            : 1E-5,    # cm^2/s, O & R diffusion coefficient. Default = 1E-5
-            "n"            : 1.0,     # number of electrons transfered. Default = 1
+            "n"            : 1,       # number of electrons transfered. Default = 1
             "alpha"        : 0.5,     # dimensionless charge-transfer coefficient. Default = 0.5
             "k0"           : 1E-2,    # cm/s, electrochemical rate constant. Default = 1E-2
             "kc"           : 1E-3,    # 1/s, chemical rate constant. Default = 1E-3
@@ -114,7 +115,7 @@ def default_constants():
         ## Experimental paramters for all voltammetry techniques
         ## LSV
             "expe_type"    : 'LSV',    # Type of experience (Default = LSV, can be CSV, creneau or SWV)
-            "Ox"           : True,    # Oxydation or Reduction direction of the voltammogram
+            "Ox"           : False,    # Oxydation or Reduction direction of the voltammogram
             "E_i"          : +0.0,    # Start potential (V)
             "E_ox"         : +0.5,    # Upper potential bound (V)
             "E_red"        : -1.5,    # Lower potential bound (V)
