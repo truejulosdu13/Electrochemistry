@@ -31,11 +31,11 @@ def set_default_constants():
 
 ## SIMULATION VARIABLES
 # simulation accuracy in time and space
-    Nt      = 2000      # number of iterations per t_k (pg 790). Default = 500
+    Nt      = 2000       # number of iterations per t_k (pg 790). Default = 500
     Nx      = 200        # number of spatial boxes  Default = 200
 
 # key adimensionnated parameters
-    DM      = 0.45        #DM = D*Dt/Dx**2 numerical adimensionated diffusion parameter. Default = 0.45
+    DM      = 0.45       #DM = D*Dt/Dx**2 numerical adimensionated diffusion parameter. Default = 0.45
     Lambda  = 50         #Lambda  = k0*Dx/D numerical adimensionated electron transfer parameter. Fast if 
 
 # physical distances according to the previosu parameters
@@ -81,6 +81,7 @@ def default_constants():
             "C_b"          : 0.0,          # mol/L, initial concentration of B. Default = 0.0
             "C_c"          : 0.0,          # mol/L, initial concentration of C. Default = 0.0
             "C_d"          : 0.0,          # mol/L, initial concentration of D. Default = 0.0
+            "C_e"          : 0.0,          # mol/L, initial concentration of D. Default = 0.0
             "num_species"  : 0,            # number of reactive species considered
 
         ### SYSTEM DEPENDENT
@@ -94,10 +95,16 @@ def default_constants():
             "n"            : 1,       # number of electrons transfered. Default = 1
             "alpha"        : 0.5,     # dimensionless charge-transfer coefficient. Default = 0.5
             "k0"           : 1E-2,    # cm/s, electrochemical rate constant. Default = 1E-2
+            "k02"          : 1E-2,    # cm/s, electrochemical rate constant. Default = 1E-2
             "kc"           : 1E-3,    # 1/s, chemical rate constant. Default = 1E-3
+            "kc2"          : 1E-3,    # 1/s, chemical rate constant. Default = 1E-3
+            "kc3"          : 1E-3,    # 1/s, chemical rate constant. Default = 1E-3
             "k_p"          : 1,       # 1/s, chemical rate constant. Default = 1E-3
             "k_m"          : 1,       # 1/s, chemical rate constant. Default = 1E-3
+            "k_p_2"        : 1,       # 1/s, chemical rate constant. Default = 1E-3
+            "k_m_2"        : 1,       # 1/s, chemical rate constant. Default = 1E-3  
             "K"            : 0,       # dimensionless equilibrium constant for the pure chemical equilibria
+            "K_2"          : 0,       # dimensionless equilibrium constant for the pure chemical equilibria
 
         ## SIMULATION VARIABLES
         # simulation accuracy in time and space
@@ -105,8 +112,8 @@ def default_constants():
             "Nx"           : 200,     # number of spatial boxes  Default = 200
 
         # key adimensionnated parameters
-            "DM"           : 0.45,    # DM = D*Dt/Dx**2 numerical adimensionated diffusion parameter. Default = 0.45
-            "Lambda"       : 50,      # Lambda  = k0*Dx/D numerical adimensionated electron transfer parameter. Fast if 
+            "DM"           : 0,    # DM = D*Dt/Dx**2 numerical adimensionated diffusion parameter. Default = 0.45
+            "Lambda"       : 0,      # Lambda  = k0*Dx/D numerical adimensionated electron transfer parameter. Fast if 
 
         # physical distances according to the previosu parameters
             "L_cuve"       : 0,       # longueur physique de la cuve so that we are always in a diffusion controled system
@@ -114,8 +121,8 @@ def default_constants():
 
         ## Experimental paramters for all voltammetry techniques
         ## LSV
-            "expe_type"    : 'LSV',    # Type of experience (Default = LSV, can be CSV, creneau or SWV)
-            "Ox"           : False,    # Oxydation or Reduction direction of the voltammogram
+            "expe_type"    : 'LSV',   # Type of experience (Default = LSV, can be CSV, creneau or SWV)
+            "Ox"           : False,   # Oxydation or Reduction direction of the voltammogram
             "E_i"          : +0.0,    # Start potential (V)
             "E_ox"         : +0.5,    # Upper potential bound (V)
             "E_red"        : -1.5,    # Lower potential bound (V)
@@ -126,11 +133,5 @@ def default_constants():
             "tau"          : 1.0,     # Time step for double step chronamperometry (s)
             "exp_time"     : 0.0      # Experience Time duration (s)
             }
-    L_cuve  = math.floor((d_cst["D"]*d_cst["Nt"])**0.5) + 2
-    Dx      = L_cuve/d_cst["Nx"]                      # pas d'espace
-    K       = d_cst["k_p"]/d_cst["k_m"]
-    d_cst["K"]  = K
-    d_cst["Dx"] = Dx
-    d_cst["L_cuve"] = L_cuve
     return(d_cst)
  
